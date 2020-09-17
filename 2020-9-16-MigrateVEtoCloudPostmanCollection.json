@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "250183b5-bc60-4d58-9e1d-dbd6bcc2d3aa",
+		"name": "2020-9-16-MigrateVeToCloud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Check DO Info",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "F5c0nfig!",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://10.1.1.5/mgmt/shared/declarative-onboarding/info",
+					"protocol": "https",
+					"host": [
+						"10",
+						"1",
+						"1",
+						"5"
+					],
+					"path": [
+						"mgmt",
+						"shared",
+						"declarative-onboarding",
+						"info"
+					]
+				},
+				"description": "Check to see if DO is installed"
+			},
+			"response": []
+		},
+		{
+			"name": "Onboard Device",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "F5c0nfig!",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"schemaVersion\": \"1.15.0\",\n      \"class\": \"Device\",\n      \"async\": true,\n      \"label\": \"my BIG-IP declaration for declarative onboarding\",\n      \"Common\": {\n        \"class\": \"Tenant\",\n        \"mySystem\": {\n          \"consoleInactivityTimeout\": 0,\n          \"hostname\": \"bigip02.f5.demo\",\n          \"guiAuditLog\": false,\n          \"cliInactivityTimeout\": 0,\n          \"tmshAuditLog\": true,\n          \"autoCheck\": true,\n          \"autoPhonehome\": true,\n          \"class\": \"System\"\n        },\n        \"myProvision\": {\n          \"ltm\": \"nominal\",\n          \"gtm\": \"minimum\",\n          \"class\": \"Provision\"\n        },\n        \"myNTP\": {\n            \"servers\": [\n                \"pool.ntp.org\"\n            ],\n            \"timezone\": \"America/Los_Angeles\",\n            \"class\": \"NTP\"\n        },\n        \"admin\": {\n            \"class\": \"User\",\n            \"userType\": \"regular\",\n            \"password\": \"F5c0nfig!\"\n        },\n        \"myDNS\": {\n          \"nameServers\": [\n            \"10.1.1.2\"\n          ],\n          \"search\": [\n            \"localhost\"\n          ],\n          \"class\": \"DNS\"\n        },\n        \"f5-aws-dns\": {\n          \"answerDefaultZones\": false,\n          \"cacheSize\": 5767168,\n          \"randomizeQueryNameCase\": true,\n          \"routeDomain\": \"0\",\n          \"useIpv4\": true,\n          \"useIpv6\": true,\n          \"useTcp\": true,\n          \"useUdp\": true,\n          \"forwardZones\": [\n            {\n              \"name\": \"amazonaws.com\",\n              \"nameservers\": [\n                \"8.8.8.8:53\"\n              ]\n            },\n            {\n              \"name\": \"idservice.net\",\n              \"nameservers\": [\n                \"8.8.8.8:53\"\n              ]\n            }\n          ],\n          \"class\": \"DNS_Resolver\"\n        },\n        \"client10_vlan\": {\n          \"cmpHash\": \"default\",\n          \"failsafeAction\": \"failover-restart-tm\",\n          \"failsafeTimeout\": 90,\n          \"mtu\": 1500,\n          \"tag\": 4094,\n          \"failsafeEnabled\": false,\n          \"interfaces\": [\n            {\n              \"name\": \"1.1\",\n              \"tagged\": false\n            }\n          ],\n          \"class\": \"VLAN\"\n        },\n        \"server10_vlan\": {\n          \"cmpHash\": \"default\",\n          \"failsafeAction\": \"failover-restart-tm\",\n          \"failsafeTimeout\": 90,\n          \"mtu\": 1500,\n          \"tag\": 4093,\n          \"failsafeEnabled\": false,\n          \"interfaces\": [\n            {\n              \"name\": \"1.2\",\n              \"tagged\": false\n            }\n          ],\n          \"class\": \"VLAN\"\n        },\n        \"client10_self\": {\n          \"address\": \"10.1.10.10/24\",\n          \"trafficGroup\": \"traffic-group-local-only\",\n          \"vlan\": \"client10_vlan\",\n          \"allowService\": \"all\",\n          \"class\": \"SelfIp\"\n        },\n        \"server20_self\": {\n          \"address\": \"10.1.20.10/24\",\n          \"trafficGroup\": \"traffic-group-local-only\",\n          \"vlan\": \"server10_vlan\",\n          \"allowService\": \"all\",\n          \"class\": \"SelfIp\"\n        },\n        \"default_route\": {\n          \"gw\": \"10.1.10.1\",\n          \"mtu\": 0,\n          \"network\": \"default\",\n          \"class\": \"Route\"\n        },\n        \"myConfigSync\": {\n          \"configsyncIp\": \"none\",\n          \"class\": \"ConfigSync\"\n        },\n        \"default\": {\n          \"mtu\": 0,\n          \"network\": \"default\",\n          \"gw\": \"10.1.1.1\",\n          \"class\": \"ManagementRoute\"\n        },\n        \"myAuthentication\": {\n          \"fallback\": false,\n          \"enabledSourceType\": \"local\",\n          \"remoteUsersDefaults\": {\n            \"role\": \"no-access\",\n            \"partitionAccess\": \"all\",\n            \"terminalAccess\": \"disabled\"\n          },\n          \"class\": \"Authentication\"\n        },\n        \"rd0\": {\n          \"connectionLimit\": 0,\n          \"id\": 0,\n          \"strict\": true,\n          \"vlans\": [\n            \"/Common/http-tunnel\",\n            \"/Common/socks-tunnel\",\n            \"/Common/server10_vlan\",\n            \"/Common/client10_vlan\"\n          ],\n          \"class\": \"RouteDomain\"\n        },\n        \"mySnmpTrapEvents\": {\n          \"device\": true,\n          \"authentication\": false,\n          \"agentStartStop\": true,\n          \"class\": \"SnmpTrapEvents\"\n        },\n        \"mySnmpAgent\": {\n          \"contact\": \"Customer Name <admin@customer.com>\",\n          \"location\": \"Network Closet 1\",\n          \"allowList\": [\n            \"127.0.0.0/8\"\n          ],\n          \"class\": \"SnmpAgent\"\n        },\n        \"comm-public\": {\n          \"name\": \"public\",\n          \"access\": \"ro\",\n          \"ipv6\": false,\n          \"source\": \"default\",\n          \"class\": \"SnmpCommunity\"\n        },\n        \"myDagGlobals\": {\n          \"icmpHash\": \"icmp\",\n          \"roundRobinMode\": \"global\",\n          \"ipv6PrefixLength\": 128,\n          \"class\": \"DagGlobals\"\n        },\n        \"myHTTPD\": {\n          \"allow\": [\n            \"all\"\n          ],\n          \"authPamIdleTimeout\": 12000,\n          \"maxClients\": 10,\n          \"sslCiphersuite\": [\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\"\n          ],\n          \"sslProtocol\": \"all -SSLv2 -SSLv3 -TLSv1\",\n          \"class\": \"HTTPD\"\n        },\n        \"myTrafficControl\": {\n          \"acceptIpOptions\": false,\n          \"acceptIpSourceRoute\": false,\n          \"allowIpSourceRoute\": false,\n          \"continueMatching\": false,\n          \"maxIcmpRate\": 100,\n          \"maxRejectRate\": 250,\n          \"maxRejectRateTimeout\": 30,\n          \"minPathMtu\": 296,\n          \"pathMtuDiscovery\": true,\n          \"portFindThresholdTimeout\": 30,\n          \"portFindThresholdTrigger\": 8,\n          \"portFindThresholdWarning\": true,\n          \"rejectUnmatched\": true,\n          \"maxPortFindLinear\": 16,\n          \"maxPortFindRandom\": 16,\n          \"class\": \"TrafficControl\"\n        },\n        \"mySSHD\": {\n          \"inactivityTimeout\": 0,\n          \"class\": \"SSHD\"\n        },\n        \"http-tunnel\": {\n          \"mtu\": 0,\n          \"usePmtu\": true,\n          \"autoLastHop\": \"default\",\n          \"tunnelType\": \"tcp-forward\",\n          \"typeOfService\": \"preserve\",\n          \"class\": \"Tunnel\"\n        },\n        \"socks-tunnel\": {\n          \"mtu\": 0,\n          \"usePmtu\": true,\n          \"autoLastHop\": \"default\",\n          \"tunnelType\": \"tcp-forward\",\n          \"typeOfService\": \"preserve\",\n          \"class\": \"Tunnel\"\n        }\n      }\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://10.1.1.5/mgmt/shared/declarative-onboarding",
+					"protocol": "https",
+					"host": [
+						"10",
+						"1",
+						"1",
+						"5"
+					],
+					"path": [
+						"mgmt",
+						"shared",
+						"declarative-onboarding"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateApp1",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"class\": \"AS3\",\n    \"action\": \"deploy\",\n    \"persist\": true,\n    \"declaration\": {\n        \"class\": \"ADC\",\n        \"schemaVersion\": \"3.0.0\",\n        \"id\": \"lmnop543421\",\n        \"label\": \"APP1\",\n        \"remark\": \"APP1\",\n        \"controls\": {\n            \"trace\": true\n        },\n        \"app1_part\": {\n            \"class\": \"Tenant\",\n            \"app1\": {\n                \"class\": \"Application\",\n                \"app1_vs\": {\n                    \"class\": \"Service_HTTPS\",\n                    \"virtualAddresses\": [\n                        \"10.1.10.11\"\n                    ],\n                    \"pool\": \"app1_pool\",\n                    \"serverTLS\": \"app1_clientssl\"\n                },\n                \"app1_pool\": {\n                    \"class\": \"Pool\",\n                    \"monitors\": [\n                        \"http\"\n                    ],\n                    \"members\": [\n                        {\n                            \"servicePort\": 80,\n                            \"serverAddresses\": [\n                                \"10.1.20.11\",\n                                \"10.1.20.12\"\n                            ]\n                        }\n                    ]\n                },\n                \"app1_clientssl\": {\n                    \"class\": \"TLS_Server\",\n                    \"certificates\": [\n                        {\n                            \"certificate\": \"app1_cert\"\n                        }\n                    ]\n                },\n                \"app1_cert\": {\n                    \"class\": \"Certificate\",\n                    \"certificate\": \"-----BEGIN CERTIFICATE-----\\nMIIE8zCCA9ugAwIBAgIDAIl7MA0GCSqGSIb3DQEBCwUAMHcxCzAJBgNVBAYTAlVT MREwDwYDVQQIDAhWaXJnaW5pYTETMBEGA1UEBwwKQWxleGFuZHJpYTEUMBIGA1UE CgwLTGlxdWlkIEVudC4xEDAOBgNVBAsMB3hCcmFuY2gxGDAWBgNVBAMMD2NhLmxp cXVpZC5sb2NhbDAeFw0xNTA5MTgxNzQ1MDhaFw0yNTA5MTUxNzQ1MDhaMGsxCzAJ BgNVBAYTAlVTMREwDwYDVQQIDAhWaXJnaW5pYTEUMBIGA1UECgwLTGlxdWlkIEVu dC4xEDAOBgNVBAsMB3hCcmFuY2gxITAfBgNVBAMMGGV4Y2hhbmdlLmxpcXVpZC5l eHRlcm5hbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMVLtqvMoRw2 Ptk6AzY0yiAUtQ9+pcLvZ9g2pmENBtlUYsZ2ME0D2LUcx/ml2noQsCSwCPzGVp+z 63DUwunvHoY3K5TJORqQS+aXaUkebblduSMIuKKuTCCeRz02YOK9Vh+EVcAS8smj dHJ7Wy0fzhVbxsLFMG+yzhVVM84ZrSxw5uwrblUnGqH7f5NHFreHTPMD3P8I07Jx gwgdFJBfapTooPUDALDHAooMv8PU8/oIltNezGpyCrq73NX48Pb5G9P3HfPv5bZh 4A8qcDQ5lan2onpMfeMpVTbrwyPuDgSgjRCExEveFXLGyLWSZLqtC/wP7tkQqQgh JEupkVASCfUCAwEAAaOCAZIwggGOMAkGA1UdEwQCMAAwHQYDVR0OBBYEFC/9HXJK kdyDtEf/7vNhSWOoFDzGMIGTBgNVHSMEgYswgYihe6R5MHcxCzAJBgNVBAYTAlVT MREwDwYDVQQIDAhWaXJnaW5pYTETMBEGA1UEBwwKQWxleGFuZHJpYTEUMBIGA1UE CgwLTGlxdWlkIEVudC4xEDAOBgNVBAsMB3hCcmFuY2gxGDAWBgNVBAMMD2NhLmxp cXVpZC5sb2NhbIIJAOkj5FsUPrcoMD4GA1UdHwQ3MDUwM6AxoC+GLWh0dHA6Ly9j YS5saXF1aWQubG9jYWwvY2EvY2EubGlxdWlkLmxvY2FsLmNybDALBgNVHQ8EBAMC A/gwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vY2EubGlxdWlk LmxvY2FsOjM0NTYwMwYDVR0RBCwwKqAoBgorBgEEAYI3FAIDoBoMGDxyeWpvaG5z b25AbGlxdWlkLmxvY2FsPjARBglghkgBhvhCAQEEBAMCBPAwDQYJKoZIhvcNAQEL BQADggEBACTdS97Uqf1HASnL9Tl12MG0Yt1QncypKftH3g0w0VLaPdZV6aOqtkXh voADWVY8az2zUz2ZE7JYeartt744evJNga7tdfB5pogBb6AZZI6RC63c7OW9iQ7o eu+tYoDnqOp4nJSfcjnig8fb0ihcPWuhe1/WZqfajvR6wY7Rv0MjTa2Oyty8+GWD 3r7gCSPNYZ7yGcVg0DdQkI2wOU92Znr68oid8JbIIux6yUk44JC3ooNPhWFPPsdO mvkOTjFmzfh76ManrLFzCfVSFZ1ngnX6KZFT8/nstTTfZYAcyhubxAau74Z3Msjl LdRdvO5PGIgqxoTlknc1ANqRvOt6FWQ=\\n-----END CERTIFICATE-----\",\n                    \"privateKey\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDFS7arzKEcNj7Z OgM2NMogFLUPfqXC72fYNqZhDQbZVGLGdjBNA9i1HMf5pdp6ELAksAj8xlafs+tw 1MLp7x6GNyuUyTkakEvml2lJHm25XbkjCLiirkwgnkc9NmDivVYfhFXAEvLJo3Ry e1stH84VW8bCxTBvss4VVTPOGa0scObsK25VJxqh+3+TRxa3h0zzA9z/CNOycYMI HRSQX2qU6KD1AwCwxwKKDL/D1PP6CJbTXsxqcgq6u9zV+PD2+RvT9x3z7+W2YeAP KnA0OZWp9qJ6TH3jKVU268Mj7g4EoI0QhMRL3hVyxsi1kmS6rQv8D+7ZEKkIISRL qZFQEgn1AgMBAAECggEACsoZM0v9g41z4m1Jv60jYJ3BSRej+QUeqLRUZPpRZZE3 1aKhAZU0RLNOPFjVmddPyrHVy/0Mv68XMRRxlFl/UdeyinB2rv01KWceWuFPHtQB S+kuL7dYcnA1dSOEKOIx04dpKRfgLybBN4GHevBCVOiv9fbSr0kX/BKswpik38k0 MPRtO/iG/YUTV8K9wOFYML76kbwaKQDR3/dW+wcpeF3LX3lgcU3aGCvDPQmfBn9g alKZtdFO05j56fvriaCeauaQYxhA63ufcqijYq1Y5WC8pek4ynbaGbCHJfDrJ0YE M0rlctNr4qm1jZ/mnDeTRod0eA7tCFmnFespSaCAAQKBgQDybDenllPFTpXpU3zN mrZAHfp9+YV+Z8Zfgf1XSoBn8UHlrilAi9Pifm4Mv5l53QRDEe5dJvNgd7RkPyfR 73zyELFzj/4xB2jKK6xcCS3aFwH3K27sOqFnSaNDnvh99sgK4TYuVzLK/uDBSF2m qdf7DAa/88TBjj/k8yiSGz9b5QKBgQDQWHrDSdexdxs9VRHkSE9CZarZQZugWwbu 5Xc+PyWL0NjACxUvYaSYwg8G9Zl49kYefcuTO9nDDeaBhUHeoguWp3zb/HhGs8qX J3yBEv5VqkSGQwSE0teadaq5V8/FLuewYIOs+b/0Tcje5xonfGP1pPvTgHuKYouS zg7ElB+00QKBgE2WQw24+CCq8SHXHZd0T6Yfsh8FcCsvrXa91MZOSuB5f5yx6/QD jJHt4uzjmYw+J3IL2B0qLTSPu0VmTSlMm9GhdBnHWRR6CZjC94wRSAKH4JIp7Xtf nG7BS6aFx4QRKp8Iy11zfQcpIefacFa5/y0TAUoIC83i6CIvjKmOXO3dAoGBALJd /YOxdTqWeLiSWwXwLgLvHUxwUbcAFzhxNRwSXaeMffQzyMhOtOaexNS1cNXRKYiz M5TyWWUXQm9CUXkzi+5Hp6qCQ8pr5BZyFLJAO4PFiHLVb0nzY+f1stqIZfUvSeWD S1fMXVzfNwg2G/sQEFfeDkYtKhb4dPuS86uyEE7xAoGAXWpAcSU6bdwIjJyts/L1 6kqkuE6rnhlgnPDvZMlCq/Tt5WdbIkt7mDKMFC1GQWlEfA3qq7K3Gz/jtobDa5m+ 8nh3UTtl+qV8rDGb1D2TZf94Z/UF4jpK4OOyHZ2yrbFtaPjRuGkodcf6XwXlM/1w /oSWEqtVW4ANs+m0X+7P5CM=\\n-----END PRIVATE KEY-----\"\n                }\n\n            },\n            \"app2\": {\n                \"class\": \"Application\",\n                \"app2_vs\": {\n                    \"class\": \"Service_HTTPS\",\n                    \"virtualAddresses\": [\n                        \"10.1.10.21\"\n                    ],\n                    \"pool\": \"app2_pool\",\n                    \"serverTLS\": \"app2_clientssl\",\n                    \"clientTLS\": \"app2_serverssl\"\n\n                },\n                \"app2_pool\": {\n                    \"class\": \"Pool\",\n                    \"monitors\": [\n                        \"https\"\n                    ],\n                    \"members\": [\n                        {\n                            \"servicePort\": 443,\n                            \"serverAddresses\": [\n                                \"10.1.20.21\",\n                                \"10.1.20.22\"\n                            ]\n                        }\n                    ]\n                },\n                \"app2_clientssl\": {\n                    \"class\": \"TLS_Server\",\n                    \"certificates\": [\n                        {\n                            \"certificate\": \"app2_cert\"\n                        }\n                    ]\n                },\n                \"app2_serverssl\": {\n                    \"class\": \"TLS_Client\"\n                 },\n                \"app2_cert\": {\n                    \"class\": \"Certificate\",\n                    \"certificate\": \"-----BEGIN CERTIFICATE-----\\nMIIE8zCCA9ugAwIBAgIDAIl7MA0GCSqGSIb3DQEBCwUAMHcxCzAJBgNVBAYTAlVT MREwDwYDVQQIDAhWaXJnaW5pYTETMBEGA1UEBwwKQWxleGFuZHJpYTEUMBIGA1UE CgwLTGlxdWlkIEVudC4xEDAOBgNVBAsMB3hCcmFuY2gxGDAWBgNVBAMMD2NhLmxp cXVpZC5sb2NhbDAeFw0xNTA5MTgxNzQ1MDhaFw0yNTA5MTUxNzQ1MDhaMGsxCzAJ BgNVBAYTAlVTMREwDwYDVQQIDAhWaXJnaW5pYTEUMBIGA1UECgwLTGlxdWlkIEVu dC4xEDAOBgNVBAsMB3hCcmFuY2gxITAfBgNVBAMMGGV4Y2hhbmdlLmxpcXVpZC5l eHRlcm5hbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMVLtqvMoRw2 Ptk6AzY0yiAUtQ9+pcLvZ9g2pmENBtlUYsZ2ME0D2LUcx/ml2noQsCSwCPzGVp+z 63DUwunvHoY3K5TJORqQS+aXaUkebblduSMIuKKuTCCeRz02YOK9Vh+EVcAS8smj dHJ7Wy0fzhVbxsLFMG+yzhVVM84ZrSxw5uwrblUnGqH7f5NHFreHTPMD3P8I07Jx gwgdFJBfapTooPUDALDHAooMv8PU8/oIltNezGpyCrq73NX48Pb5G9P3HfPv5bZh 4A8qcDQ5lan2onpMfeMpVTbrwyPuDgSgjRCExEveFXLGyLWSZLqtC/wP7tkQqQgh JEupkVASCfUCAwEAAaOCAZIwggGOMAkGA1UdEwQCMAAwHQYDVR0OBBYEFC/9HXJK kdyDtEf/7vNhSWOoFDzGMIGTBgNVHSMEgYswgYihe6R5MHcxCzAJBgNVBAYTAlVT MREwDwYDVQQIDAhWaXJnaW5pYTETMBEGA1UEBwwKQWxleGFuZHJpYTEUMBIGA1UE CgwLTGlxdWlkIEVudC4xEDAOBgNVBAsMB3hCcmFuY2gxGDAWBgNVBAMMD2NhLmxp cXVpZC5sb2NhbIIJAOkj5FsUPrcoMD4GA1UdHwQ3MDUwM6AxoC+GLWh0dHA6Ly9j YS5saXF1aWQubG9jYWwvY2EvY2EubGlxdWlkLmxvY2FsLmNybDALBgNVHQ8EBAMC A/gwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vY2EubGlxdWlk LmxvY2FsOjM0NTYwMwYDVR0RBCwwKqAoBgorBgEEAYI3FAIDoBoMGDxyeWpvaG5z b25AbGlxdWlkLmxvY2FsPjARBglghkgBhvhCAQEEBAMCBPAwDQYJKoZIhvcNAQEL BQADggEBACTdS97Uqf1HASnL9Tl12MG0Yt1QncypKftH3g0w0VLaPdZV6aOqtkXh voADWVY8az2zUz2ZE7JYeartt744evJNga7tdfB5pogBb6AZZI6RC63c7OW9iQ7o eu+tYoDnqOp4nJSfcjnig8fb0ihcPWuhe1/WZqfajvR6wY7Rv0MjTa2Oyty8+GWD 3r7gCSPNYZ7yGcVg0DdQkI2wOU92Znr68oid8JbIIux6yUk44JC3ooNPhWFPPsdO mvkOTjFmzfh76ManrLFzCfVSFZ1ngnX6KZFT8/nstTTfZYAcyhubxAau74Z3Msjl LdRdvO5PGIgqxoTlknc1ANqRvOt6FWQ=\\n-----END CERTIFICATE-----\",\n                    \"privateKey\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDFS7arzKEcNj7Z OgM2NMogFLUPfqXC72fYNqZhDQbZVGLGdjBNA9i1HMf5pdp6ELAksAj8xlafs+tw 1MLp7x6GNyuUyTkakEvml2lJHm25XbkjCLiirkwgnkc9NmDivVYfhFXAEvLJo3Ry e1stH84VW8bCxTBvss4VVTPOGa0scObsK25VJxqh+3+TRxa3h0zzA9z/CNOycYMI HRSQX2qU6KD1AwCwxwKKDL/D1PP6CJbTXsxqcgq6u9zV+PD2+RvT9x3z7+W2YeAP KnA0OZWp9qJ6TH3jKVU268Mj7g4EoI0QhMRL3hVyxsi1kmS6rQv8D+7ZEKkIISRL qZFQEgn1AgMBAAECggEACsoZM0v9g41z4m1Jv60jYJ3BSRej+QUeqLRUZPpRZZE3 1aKhAZU0RLNOPFjVmddPyrHVy/0Mv68XMRRxlFl/UdeyinB2rv01KWceWuFPHtQB S+kuL7dYcnA1dSOEKOIx04dpKRfgLybBN4GHevBCVOiv9fbSr0kX/BKswpik38k0 MPRtO/iG/YUTV8K9wOFYML76kbwaKQDR3/dW+wcpeF3LX3lgcU3aGCvDPQmfBn9g alKZtdFO05j56fvriaCeauaQYxhA63ufcqijYq1Y5WC8pek4ynbaGbCHJfDrJ0YE M0rlctNr4qm1jZ/mnDeTRod0eA7tCFmnFespSaCAAQKBgQDybDenllPFTpXpU3zN mrZAHfp9+YV+Z8Zfgf1XSoBn8UHlrilAi9Pifm4Mv5l53QRDEe5dJvNgd7RkPyfR 73zyELFzj/4xB2jKK6xcCS3aFwH3K27sOqFnSaNDnvh99sgK4TYuVzLK/uDBSF2m qdf7DAa/88TBjj/k8yiSGz9b5QKBgQDQWHrDSdexdxs9VRHkSE9CZarZQZugWwbu 5Xc+PyWL0NjACxUvYaSYwg8G9Zl49kYefcuTO9nDDeaBhUHeoguWp3zb/HhGs8qX J3yBEv5VqkSGQwSE0teadaq5V8/FLuewYIOs+b/0Tcje5xonfGP1pPvTgHuKYouS zg7ElB+00QKBgE2WQw24+CCq8SHXHZd0T6Yfsh8FcCsvrXa91MZOSuB5f5yx6/QD jJHt4uzjmYw+J3IL2B0qLTSPu0VmTSlMm9GhdBnHWRR6CZjC94wRSAKH4JIp7Xtf nG7BS6aFx4QRKp8Iy11zfQcpIefacFa5/y0TAUoIC83i6CIvjKmOXO3dAoGBALJd /YOxdTqWeLiSWwXwLgLvHUxwUbcAFzhxNRwSXaeMffQzyMhOtOaexNS1cNXRKYiz M5TyWWUXQm9CUXkzi+5Hp6qCQ8pr5BZyFLJAO4PFiHLVb0nzY+f1stqIZfUvSeWD S1fMXVzfNwg2G/sQEFfeDkYtKhb4dPuS86uyEE7xAoGAXWpAcSU6bdwIjJyts/L1 6kqkuE6rnhlgnPDvZMlCq/Tt5WdbIkt7mDKMFC1GQWlEfA3qq7K3Gz/jtobDa5m+ 8nh3UTtl+qV8rDGb1D2TZf94Z/UF4jpK4OOyHZ2yrbFtaPjRuGkodcf6XwXlM/1w /oSWEqtVW4ANs+m0X+7P5CM=\\n-----END PRIVATE KEY-----\"\n                }\n            }\n            \n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "https://{{bigip1}}/mgmt/shared/appsvcs/declare",
+					"protocol": "https",
+					"host": [
+						"{{bigip1}}"
+					],
+					"path": [
+						"mgmt",
+						"shared",
+						"appsvcs",
+						"declare"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteApp1",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://{{bigip1}}/mgmt/shared/appsvcs/declare/app1_part",
+					"protocol": "https",
+					"host": [
+						"{{bigip1}}"
+					],
+					"path": [
+						"mgmt",
+						"shared",
+						"appsvcs",
+						"declare",
+						"app1_part"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
